@@ -1,0 +1,12 @@
+.DS_Store
+.build/
+build/
+.local/
+Config/Local.xcconfig
+*.xcuserstate
+xcuserdata/
+*.mobileprovision
+*.provisionprofile
+*.p12
+client_secret*.json
+.env*

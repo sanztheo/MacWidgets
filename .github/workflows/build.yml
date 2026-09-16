@@ -1,0 +1,32 @@
+name: Build MacWidgets
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify core and both targets
+        run: scripts/check.sh
+      - name: Build app and widget extension
+        run: >-
+          xcodebuild -project MacWidgets.xcodeproj -scheme MacWidgets
+          -configuration Release -derivedDataPath build
+          CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=UNSIGNED00
+          SHARED_KEYCHAIN_GROUP=UNSIGNED00.com.sanztheo.MacWidgets.shared
+          build
+      - name: Verify widget metadata and package
+        run: |
+          test -d build/Build/Products/Release/MacWidgets.app/Contents/PlugIns/MacWidgetsExtension.appex
+          find build/Build/Products/Release/MacWidgets.app -name '*.appintents' -print
+          ditto -c -k --sequesterRsrc --keepParent build/Build/Products/Release/MacWidgets.app build/MacWidgets-unsigned.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MacWidgets-unsigned
+          path: build/MacWidgets-unsigned.zip
+          retention-days: 14

@@ -1,0 +1,83 @@
+name: MacWidgets
+options:
+  bundleIdPrefix: com.sanztheo
+  deploymentTarget:
+    macOS: "14.0"
+  developmentLanguage: fr
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_HARDENED_RUNTIME: YES
+    SHARED_APP_GROUP: $(DEVELOPMENT_TEAM).com.sanztheo.MacWidgets
+    SHARED_KEYCHAIN_GROUP: $(AppIdentifierPrefix)com.sanztheo.MacWidgets.shared
+targets:
+  MacWidgets:
+    type: application
+    platform: macOS
+    sources:
+      - Sources/Core
+      - Sources/Services
+      - Sources/Design
+      - Sources/App
+      - Sources/Widgets/CalendarIntents.swift
+      - Resources/Assets.xcassets
+    dependencies:
+      - target: MacWidgetsExtension
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sanztheo.MacWidgets
+        COMBINE_HIDPI_IMAGES: YES
+    info:
+      path: Config/App-Info.plist
+      properties:
+        CFBundleDisplayName: MacWidgets
+        LSApplicationCategoryType: public.app-category.productivity
+        SharedAppGroup: $(SHARED_APP_GROUP)
+        SharedKeychainGroup: $(SHARED_KEYCHAIN_GROUP)
+    entitlements:
+      path: Config/App.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.network.server: true
+        com.apple.security.files.user-selected.read-only: true
+        com.apple.security.application-groups: [$(SHARED_APP_GROUP)]
+        keychain-access-groups: [$(SHARED_KEYCHAIN_GROUP)]
+  MacWidgetsExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - Sources/Core
+      - Sources/Services
+      - Sources/Design
+      - Sources/Widgets
+      - Resources/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sanztheo.MacWidgets.Widgets
+        SKIP_INSTALL: YES
+        APPLICATION_EXTENSION_API_ONLY: YES
+    info:
+      path: Config/Widget-Info.plist
+      properties:
+        CFBundleDisplayName: MacWidgets
+        SharedAppGroup: $(SHARED_APP_GROUP)
+        SharedKeychainGroup: $(SHARED_KEYCHAIN_GROUP)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Config/Widget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.application-groups: [$(SHARED_APP_GROUP)]
+        keychain-access-groups: [$(SHARED_KEYCHAIN_GROUP)]
+schemes:
+  MacWidgets:
+    build:
+      targets:
+        MacWidgets: all
