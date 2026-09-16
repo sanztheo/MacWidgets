@@ -11,12 +11,12 @@ struct GitHubProvider: TimelineProvider {
         GitHubEntry(date: .now, snapshot: PreviewData.github, error: nil)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (GitHubEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping @Sendable (GitHubEntry) -> Void) {
         completion(context.isPreview ? placeholder(in: context) :
             GitHubEntry(date: .now, snapshot: SharedStore.read("github.json", as: PullRequestSnapshot.self), error: nil))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<GitHubEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping @Sendable (Timeline<GitHubEntry>) -> Void) {
         Task {
             let error = await WidgetSync.shared.github()
             let snapshot = SharedStore.read("github.json", as: PullRequestSnapshot.self)
@@ -38,7 +38,7 @@ struct CalendarProvider: TimelineProvider {
         CalendarEntry(date: .now, selectedDate: PreviewData.date, snapshot: PreviewData.calendar, error: nil)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (CalendarEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping @Sendable (CalendarEntry) -> Void) {
         let selected = SharedStore.selectedDate
         completion(context.isPreview ? placeholder(in: context) : CalendarEntry(
             date: .now, selectedDate: selected,
@@ -46,7 +46,7 @@ struct CalendarProvider: TimelineProvider {
         ))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<CalendarEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping @Sendable (Timeline<CalendarEntry>) -> Void) {
         Task {
             let selected = SharedStore.selectedDate
             let error = await WidgetSync.shared.calendar(date: selected)

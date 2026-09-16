@@ -23,7 +23,7 @@ jobs:
       - name: Verify widget metadata and package
         run: |
           test -d build/Build/Products/Release/MacWidgets.app/Contents/PlugIns/MacWidgetsExtension.appex
-          find build/Build/Products/Release/MacWidgets.app -name '*.appintents' -print
+          test -n "$(find build/Build/Products/Release/MacWidgets.app/Contents/PlugIns -name 'Metadata.appintents' -print -quit)"
           ditto -c -k --sequesterRsrc --keepParent build/Build/Products/Release/MacWidgets.app build/MacWidgets-unsigned.zip
       - uses: actions/upload-artifact@v4
         with:
