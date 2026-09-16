@@ -10,11 +10,22 @@ SwiftUI renders were inspected, including a correction for a truncated date in
 the large layout. The exact GitHub query was accepted by the live GraphQL API;
 no private PR data was committed.
 
-A development signing probe was blocked by macOS with an invalid-signature
-message. It claimed a restricted Keychain Access Group without a provisioning
-profile. That configuration has been removed in favor of the documented macOS
-file-based Keychain ACL model. The blocked probe is not part of the repository
-or an installation artifact. No Gatekeeper/XProtect setting was changed.
+A local installation was blocked and moved to Trash by macOS. Read-only AMFI
+logs reported `CSSMERR_TP_CERT_REVOKED` (-2147409652). An explicit online OCSP
+verification confirmed that the local development signing certificate had been
+revoked. Ordinary `codesign --verify` and `security find-identity` had not caught
+that revocation. Do not retry installation with that certificate.
+
+The initial probe also claimed a restricted Keychain Access Group without a
+provisioning profile. That separate configuration defect was removed in favor
+of the documented macOS file-based Keychain ACL model; this did **not** resolve
+the certificate revocation. No Gatekeeper/XProtect setting was changed, and the
+blocked probe is not part of the repository or an installation artifact.
+
+GitHub Actions run `35118931861` passed core checks, both target checks, full
+Xcode compilation, and App Intent metadata verification. Its artifact is an
+unsigned development build. Successful local installation still requires a
+valid signing identity; a successful build alone is not that validation.
 
 ## Checks
 

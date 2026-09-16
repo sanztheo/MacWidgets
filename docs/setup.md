@@ -21,6 +21,26 @@ produce a Developer ID signed, notarized build with the matching entitlements,
 and verify its widgets on a clean Mac. Do not disable Gatekeeper as an
 installation procedure.
 
+For local testing without Xcode, download `MacWidgets-unsigned.zip` from a
+successful GitHub Actions run, then sign it using your own installed Apple
+Development identity:
+
+```sh
+scripts/install-local.sh /absolute/path/MacWidgets-unsigned.zip IDENTITY_SHA1 TEAM_ID
+```
+
+The script first requires an online certificate revocation check and verifies
+the certificate's team identifier. It then signs inside-out, checks both signatures and installs into
+`/Applications/MacWidgets.app`. It refuses to overwrite an existing installation
+and does not launch the app, remove quarantine attributes, or change Gatekeeper.
+This local development install is separate from a notarized public release.
+
+If macOS reports “malicious software” or `CSSMERR_TP_CERT_REVOKED`, stop using that
+build and certificate. A revoked development certificate can remain listed by
+`security find-identity`; a successful `codesign --verify` is not sufficient.
+Obtain a new certificate from Apple and rebuild/re-sign. Do not bypass the system
+warning, remove quarantine flags, or disable security protections.
+
 ## GitHub
 
 1. Open MacWidgets → Connexions.
