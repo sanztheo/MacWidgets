@@ -16,8 +16,8 @@ compiled into both targets. There are no runtime packages or remote backend.
 
 ## Data flow
 
-The host app connects accounts and saves credentials to the shared Keychain
-access group. A widget's timeline provider reads those credentials, fetches
+The host app connects accounts and saves credentials to the macOS Keychain with
+an ACL limited to the signed app and extension. A widget's timeline provider reads those credentials, fetches
 service data if its snapshot is older than 15 minutes, and atomically writes the
 snapshot into the shared App Group container. It then returns the snapshot and
 any failure message to WidgetKit. This also works while the host app is closed,
@@ -26,6 +26,15 @@ provided signing and Keychain access are valid.
 No token or raw API response is logged. The cache contains calendar/PR titles,
 times and links, so it is private data. Cache files have mode 0600 and are not
 inside the repository. Account disconnects remove the corresponding cache.
+
+The Keychain implementation intentionally uses `SecItem` against the macOS
+file-based Keychain, with `SecAccess` for the two-app ACL. Those ACL constructors
+are deprecated but remain supported by the documented macOS Keychain model.
+They avoid requiring a provisioned Keychain Access Group for local development.
+The ACL must never be replaced with a list trusting every application. A future
+move to the data-protection Keychain requires profiles for both binaries and an
+explicit migration of existing credentials; adding the restricted entitlement
+without profiles prevents launch. See [Apple TN3137](https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains).
 
 ## Calendar
 

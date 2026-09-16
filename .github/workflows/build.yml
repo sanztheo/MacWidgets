@@ -18,7 +18,6 @@ jobs:
           xcodebuild -project MacWidgets.xcodeproj -scheme MacWidgets
           -configuration Release -derivedDataPath build
           CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=UNSIGNED00
-          SHARED_KEYCHAIN_GROUP=UNSIGNED00.com.sanztheo.MacWidgets.shared
           build
       - name: Verify widget metadata and package
         run: |

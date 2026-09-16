@@ -4,21 +4,21 @@
 
 ## Signing
 
-The app and extension need the same Apple signing team, App Group and Keychain
-Access Group. `project.yml` derives the shared identifiers from
-`DEVELOPMENT_TEAM` and `AppIdentifierPrefix`; it contains no personal signing ID.
-Select your team on both targets in Xcode and use automatic signing. A matching
-provisioning profile may be required for the shared Keychain entitlement.
+The app and extension need the same Apple signing team and App Group.
+`project.yml` derives the shared identifier from `DEVELOPMENT_TEAM`; it contains
+no personal signing ID. Select your team on both targets in Xcode and use
+automatic signing.
 
 The macOS App Group uses `TEAMID.com.sanztheo.MacWidgets`. Apple supports this
-team-prefixed naming convention on macOS. The shared Keychain group is
-`APP_IDENTIFIER_PREFIX.com.sanztheo.MacWidgets.shared` (the prefix already includes
-its trailing dot). Missing access is an explicit connection error, not a fallback
-to unprotected credential files.
+team-prefixed naming convention on macOS without provisioning. Credentials use
+the macOS file-based Keychain with an explicit access-control list containing
+only the signed host app and embedded extension. This app does not claim the
+restricted `keychain-access-groups` entitlement. Missing access is an explicit
+connection error, never a fallback to unprotected credential files.
 
 The unsigned CI archive is a development artifact. For public installation,
-produce a Developer ID signed, notarized build with the matching entitlements and
-profiles, and verify its widgets on a clean Mac. Do not disable Gatekeeper as an
+produce a Developer ID signed, notarized build with the matching entitlements,
+and verify its widgets on a clean Mac. Do not disable Gatekeeper as an
 installation procedure.
 
 ## GitHub

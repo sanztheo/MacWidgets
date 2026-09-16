@@ -5,6 +5,17 @@
 Initial implementation: 2026-09-16. This page distinguishes compilation from a
 working installed widget and from public distribution.
 
+Local Swift 6 core checks and both target typechecks passed on macOS 27. Native
+SwiftUI renders were inspected, including a correction for a truncated date in
+the large layout. The exact GitHub query was accepted by the live GraphQL API;
+no private PR data was committed.
+
+A development signing probe was blocked by macOS with an invalid-signature
+message. It claimed a restricted Keychain Access Group without a provisioning
+profile. That configuration has been removed in favor of the documented macOS
+file-based Keychain ACL model. The blocked probe is not part of the repository
+or an installation artifact. No Gatekeeper/XProtect setting was changed.
+
 ## Checks
 
 `scripts/check.sh` compiles and runs focused checks for calendar grid alignment,
